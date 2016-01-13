@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<system xmlns="http://www.eiffel.com/developers/xml/configuration-1-15-0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.eiffel.com/developers/xml/configuration-1-15-0 http://www.eiffel.com/developers/xml/configuration-1-15-0.xsd" name="randomizer" uuid="24B099D3-94D7-4F88-B560-F0025073169C" library_target="randomizer">
+	<description>Vaulted randomizer</description>
+	<target name="test">
+		<description>Test of randomizer Library</description>
+		<root class="ANY" feature="default_create"/>
+		<version major="1" minor="1" release="1" build="1"/>
+		<file_rule>
+			<exclude>.git</exclude>
+		</file_rule>
+		<option is_obsolete_routine_type="true" void_safety="transitional" syntax="provisional">
+			<assertions precondition="true" postcondition="true" check="true" invariant="true" loop="true" supplier_precondition="true"/>
+		</option>
+		<setting name="console_application" value="true"/>
+		<library name="base" location="$ISE_LIBRARY\library\base\base-safe.ecf"/>
+		<library name="test_set_helper" location="$GITHUB\test_set_helper\test_set_helper.ecf"/>
+		<library name="testing" location="$ISE_LIBRARY\library\testing\testing-safe.ecf"/>
+		<library name="time" location="$ISE_LIBRARY\library\time\time-safe.ecf"/>
+		<cluster name="randomizer" location=".\" recursive="true">
+			<file_rule>
+				<exclude>/EIFGENs$</exclude>
+				<exclude>/CVS$</exclude>
+				<exclude>/.svn$</exclude>
+			</file_rule>
+		</cluster>
+	</target>
+	<target name="randomizer" extends="test">
+		<description>randomizer Library</description>
+		<root all_classes="true"/>
+		<file_rule>
+			<exclude>tests</exclude>
+		</file_rule>
+	</target>
+</system>
