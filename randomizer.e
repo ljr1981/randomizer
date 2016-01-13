@@ -2,52 +2,123 @@ note
 	description: "[
 		Concrete representation of Randomizing features.
 		]"
+	synopsis: "[
+		The features of this class represent various applications
+		of having access to a `random_number' and `random_in_range'.
+		From these two features, we can ask for random characters
+		from various sets of characters (like A-Z, a-z, and 0-9).
+		]"
 
 class
 	RANDOMIZER
 
-feature -- Numeric
+feature -- Random Numbers
+
+	random_number: INTEGER
+			-- A new `random_number' based on `random_sequence'.
+		do
+			random_sequence.forth
+			Result := random_sequence.item
+		end
 
 	random_in_range (a_range: INTEGER_INTERVAL): INTEGER
 			-- A `random_in_range' of `a_range'.
 		do
 			Result := random_number \\ (a_range.upper - a_range.lower) + 1 + a_range.lower
+		ensure
+			in_range: a_range.has (Result)
 		end
 
-feature {NONE} -- Implementation: Strings
-
-	string_with_exception_removed (a_string: STRING; a_exception: CHARACTER): STRING
-			-- A `string_with_exception_removed'--as in--`a_exception' removed from `a_string'.
+	unique_array (a_capacity: INTEGER; a_range: INTEGER_INTERVAL): ARRAYED_LIST [INTEGER]
+			-- A `unique_array' of `a_capacity' as a list of `random_number' items.
+		local
+			l_number, v: INTEGER
 		do
-			Result := a_string.twin
-			Result.replace_substring_all (a_exception.out, "")
+			create Result.make (a_capacity)
+			across 1 |..| a_capacity as ic loop
+				from
+					v := a_capacity * 100
+					l_number := random_number \\ (a_range.upper - a_range.lower) + 1 + a_range.lower
+				variant
+					v
+				until
+					not Result.has (l_number) or Result.is_empty
+				loop
+					v := v - 1
+					l_number := random_number \\ (a_range.upper - a_range.lower) + 1 + a_range.lower
+				end
+				Result.force (l_number)
+			end
+		ensure
+			capacity: Result.count = a_capacity
+			unique_content: across Result as ic_list all Result.occurrences (ic_list.item) = 1 end
 		end
 
-feature {NONE} -- Implementation: Random
+feature -- Random Characters
+
+	random_digit: CHARACTER
+			-- A `random_digit' from `digits'.
+		do
+			Result := Digits [random_in_range (1 |..| Digits.count)]
+		ensure
+			contains_digit: Digits.has (Result)
+		end
+
+	random_a_to_z_lower: CHARACTER
+			-- A `random_a_to_z_lower' case.
+		do
+			Result := Alphabet_lower [random_in_range (1 |..| Alphabet_lower.count)]
+		ensure
+			contains_lower: Alphabet_lower.has (Result)
+		end
+
+	random_a_to_z_upper: CHARACTER
+			-- A `random_a_to_z_upper' case.
+		do
+			Result := random_a_to_z_lower.as_upper
+		ensure
+			contains_upper: Alphabet_lower.has (Result.as_lower)
+		end
+
+	random_character_from_string (a_string: STRING): CHARACTER
+			-- A `random_character_from_string'.
+		do
+			Result := a_string [random_in_range (1 |..| a_string.count)]
+		ensure
+			in_string: a_string.has (Result)
+		end
+
+feature -- Randoms with Exceptions
 
 	random_digit_with_exceptions (a_exceptions: STRING): CHARACTER
 			-- A `random_digit_with_exceptions' found in `a_exceptions'.
 		do
 			Result := random_with_exceptions (a_exceptions, Digits)
+		ensure
+			no_exceptions: not a_exceptions.has (Result)
 		end
 
 	random_a_to_z_with_exceptions (a_exceptions: STRING): CHARACTER
 			-- A `random_a_to_z_with_exceptions' found in `a_exceptions'.
 		do
 			Result := random_with_exceptions (a_exceptions, Alphabet_lower)
+		ensure
+			no_exceptions: not a_exceptions.has (Result)
 		end
 
 	random_a_to_z_upper_with_exceptions (a_exceptions: STRING): CHARACTER
 			-- A `random_a_to_z_upper_with_exceptions' found in `a_exceptions'.
 		do
-			Result := random_with_exceptions (a_exceptions, Alphabet_lower).as_upper
+			Result := random_with_exceptions (a_exceptions, Alphabet_lower.as_upper)
+		ensure
+			no_exceptions: not a_exceptions.has (Result)
 		end
 
 	random_with_exceptions (a_exceptions, a_string: STRING): CHARACTER
 			-- A `random_with_exceptions' based on `a_exceptions' from `a_string'.
 		require
 			has_exceptions: not a_exceptions.is_empty
-			exceptions_are_digits: across a_exceptions as ic_exception all digits.has (ic_exception.item) end
+			exceptions_in_string: across a_exceptions as ic_exception all a_string.has (ic_exception.item) end
 		do
 			from Result := a_exceptions [1] until not a_exceptions.has (Result)
 			loop
@@ -57,36 +128,7 @@ feature {NONE} -- Implementation: Random
 			no_exceptions: not a_exceptions.has (Result)
 		end
 
-	random_digit: CHARACTER
-			-- A `random_digit' from `digits'.
-		do
-			Result := Digits [random_in_range (1 |..| Digits.count)]
-		end
-
-	random_a_to_z_lower: CHARACTER
-			-- A `random_a_to_z_lower' case.
-		do
-			Result := Alphabet_lower [random_in_range (1 |..| Alphabet_lower.count)]
-		end
-
-	random_a_to_z_upper: CHARACTER
-			-- A `random_a_to_z_upper' case.
-		do
-			Result := random_a_to_z_lower.as_upper
-		end
-
-	random_character_from_string (a_string: STRING): CHARACTER
-			-- A `random_character_from_string'.
-		do
-			Result := a_string [random_in_range (1 |..| a_string.count)]
-		end
-
-	random_number: INTEGER
-			-- A new `random_number' based on `random_sequence'.
-		do
-			random_sequence.forth
-			Result := random_sequence.item
-		end
+feature {NONE} -- Implementation
 
 	random_sequence: RANDOM
 			-- Random sequence
