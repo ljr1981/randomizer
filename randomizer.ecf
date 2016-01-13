@@ -7,6 +7,7 @@
 		<version major="1" minor="1" release="1" build="1"/>
 		<file_rule>
 			<exclude>.git</exclude>
+			<exclude>dict</exclude>
 		</file_rule>
 		<option is_obsolete_routine_type="true" void_safety="transitional" syntax="provisional">
 			<assertions precondition="true" postcondition="true" check="true" invariant="true" loop="true" supplier_precondition="true"/>
