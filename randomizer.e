@@ -69,6 +69,16 @@ feature -- Random Numbers
 			unique_content: across Result as ic_list all Result.occurrences (ic_list.item) = 1 end
 		end
 
+feature -- Random Boolean
+
+	random_boolean: BOOLEAN
+			-- A `random_boolean' value.
+		do
+			if random_integer_in_range (1 |..| 10) >= 5 then
+				Result := True
+			end
+		end
+
 feature -- Random Characters
 
 	random_digit: CHARACTER
@@ -417,19 +427,19 @@ feature -- Random Addresses
 
 	random_address: STRING
 		do
-			Result := random_integer_in_range (1000 |..| 9999).out
+			Result := random_integer_in_range (1000 |..| 9999).out					-- Street Number
 			Result.append_character (' ')
-			Result.append_string (random_word.as_upper)
+			Result.append_string (random_word.as_upper)								-- Street name
 			Result.append_character (' ')
-			Result.append_string (random_street_suffix.as_upper)
+			Result.append_string (random_street_suffix.as_upper)					-- Street Suffix
 			Result.append_character ('%N')
-			Result.append_string (random_city_name.as_upper)
+			Result.append_string (random_city_name.as_upper)						-- City name
 			Result.append_character (',')
 			Result.append_character (' ')
-			Result.append_string (random_state_code)
+			Result.append_string (random_state_code)								-- State code
 			Result.append_character (' ')
 			Result.append_character (' ')
-			Result.append_string (random_integer_in_range (11111 |..| 99999).out)
+			Result.append_string (random_integer_in_range (11111 |..| 99999).out)	-- ZIP Code
 		end
 
 	random_state_code: STRING
@@ -440,68 +450,6 @@ feature -- Random Addresses
 			Result := l_list [random_integer_in_range (1 |..| l_list.count)]
 		end
 
-	state_codes: STRING = "[
-AL
-AK
-AZ
-AR
-CA
-CO
-CT
-DE
-FL
-GA
-HI
-ID
-IL
-IN
-IA
-KS
-KY
-LA
-ME
-MD
-MA
-MI
-MN
-MS
-MO
-MT
-NE
-NV
-NH
-NJ
-NM
-NY
-NC
-ND
-OH
-OK
-OR
-PA
-RI
-SC
-SD
-TN
-TX
-UT
-VT
-VA
-WA
-WV
-WI
-WY
-DC
-PR
-VI
-AS
-GU
-MP
-AA
-AE
-AP
-]"
-
 	random_city_name: STRING
 		local
 			l_list: LIST [STRING]
@@ -511,23 +459,6 @@ AP
 			Result.append_string (l_list [random_integer_in_range (1 |..| l_list.count)])
 		end
 
-	city_suffixes: STRING = "[
-polis
-ville
-ford
-furt
-forth
-shire
-berg
-burg
-borough
-brough
-field
-kirk
-bury
-stadt
-]"
-
 	random_street_suffix: STRING
 		local
 			l_list: LIST [STRING]
@@ -535,6 +466,73 @@ stadt
 			l_list := street_suffixes.split ('%N')
 			Result := l_list [random_integer_in_range (1 |..| l_list.count)]
 		end
+
+feature -- Randoms with Exceptions
+
+	random_digit_with_exceptions (a_exceptions: STRING): CHARACTER
+			-- A `random_digit_with_exceptions' found in `a_exceptions'.
+		do
+			Result := random_with_exceptions (a_exceptions, Digits)
+		ensure
+			no_exceptions: not a_exceptions.has (Result)
+		end
+
+	random_a_to_z_with_exceptions (a_exceptions: STRING): CHARACTER
+			-- A `random_a_to_z_with_exceptions' found in `a_exceptions'.
+		do
+			Result := random_with_exceptions (a_exceptions, Alphabet_lower)
+		ensure
+			no_exceptions: not a_exceptions.has (Result)
+		end
+
+	random_a_to_z_upper_with_exceptions (a_exceptions: STRING): CHARACTER
+			-- A `random_a_to_z_upper_with_exceptions' found in `a_exceptions'.
+		do
+			Result := random_with_exceptions (a_exceptions, Alphabet_lower.as_upper)
+		ensure
+			no_exceptions: not a_exceptions.has (Result)
+		end
+
+	random_with_exceptions (a_exceptions, a_string: STRING): CHARACTER
+			-- A `random_with_exceptions' based on `a_exceptions' from `a_string'.
+		require
+			has_exceptions: not a_exceptions.is_empty
+			exceptions_in_string: across a_exceptions as ic_exception all a_string.has (ic_exception.item) end
+		do
+			from Result := a_exceptions [1] until not a_exceptions.has (Result)
+			loop
+				Result := a_string [random_integer_in_range (1 |..| a_string.count)]
+			end
+		ensure
+			no_exceptions: not a_exceptions.has (Result)
+		end
+
+feature {NONE} -- Implementation
+
+	random_sequence: RANDOM
+			-- Random sequence
+		local
+			l_time: TIME
+			l_seed: INTEGER
+		once
+				-- This computes milliseconds since midnight.
+			create l_time.make_now
+			l_seed := l_time.hour
+			l_seed := l_seed * 60 + l_time.minute
+			l_seed := l_seed * 60 + l_time.second
+			l_seed := l_seed * 1000 + l_time.milli_second
+			create Result.set_seed (l_seed)
+		end
+
+feature -- Constants
+
+	alphabet_lower: STRING = "abcdefghijklmnopqrstuvwxyz"
+
+	alpha_vowels: STRING = "aeiouy"
+
+	alpha_consonents: STRING = "bcdfghjklmnpqrstvwxz"
+
+	digits: STRING = "0123456789"
 
 	street_suffixes: STRING = "[
 ALLEE
@@ -747,71 +745,83 @@ XRD
 XRDS
 ]"
 
-feature -- Randoms with Exceptions
+	city_suffixes: STRING = "[
+polis
+ville
+ford
+furt
+forth
+shire
+berg
+burg
+borough
+brough
+field
+kirk
+bury
+stadt
+]"
 
-	random_digit_with_exceptions (a_exceptions: STRING): CHARACTER
-			-- A `random_digit_with_exceptions' found in `a_exceptions'.
-		do
-			Result := random_with_exceptions (a_exceptions, Digits)
-		ensure
-			no_exceptions: not a_exceptions.has (Result)
-		end
-
-	random_a_to_z_with_exceptions (a_exceptions: STRING): CHARACTER
-			-- A `random_a_to_z_with_exceptions' found in `a_exceptions'.
-		do
-			Result := random_with_exceptions (a_exceptions, Alphabet_lower)
-		ensure
-			no_exceptions: not a_exceptions.has (Result)
-		end
-
-	random_a_to_z_upper_with_exceptions (a_exceptions: STRING): CHARACTER
-			-- A `random_a_to_z_upper_with_exceptions' found in `a_exceptions'.
-		do
-			Result := random_with_exceptions (a_exceptions, Alphabet_lower.as_upper)
-		ensure
-			no_exceptions: not a_exceptions.has (Result)
-		end
-
-	random_with_exceptions (a_exceptions, a_string: STRING): CHARACTER
-			-- A `random_with_exceptions' based on `a_exceptions' from `a_string'.
-		require
-			has_exceptions: not a_exceptions.is_empty
-			exceptions_in_string: across a_exceptions as ic_exception all a_string.has (ic_exception.item) end
-		do
-			from Result := a_exceptions [1] until not a_exceptions.has (Result)
-			loop
-				Result := a_string [random_integer_in_range (1 |..| a_string.count)]
-			end
-		ensure
-			no_exceptions: not a_exceptions.has (Result)
-		end
-
-feature {NONE} -- Implementation
-
-	random_sequence: RANDOM
-			-- Random sequence
-		local
-			l_time: TIME
-			l_seed: INTEGER
-		once
-				-- This computes milliseconds since midnight.
-			create l_time.make_now
-			l_seed := l_time.hour
-			l_seed := l_seed * 60 + l_time.minute
-			l_seed := l_seed * 60 + l_time.second
-			l_seed := l_seed * 1000 + l_time.milli_second
-			create Result.set_seed (l_seed)
-		end
-
-feature -- Constants
-
-	alphabet_lower: STRING = "abcdefghijklmnopqrstuvwxyz"
-
-	alpha_vowels: STRING = "aeiouy"
-
-	alpha_consonents: STRING = "bcdfghjklmnpqrstvwxz"
-
-	digits: STRING = "0123456789"
+	state_codes: STRING = "[
+AL
+AK
+AZ
+AR
+CA
+CO
+CT
+DE
+FL
+GA
+HI
+ID
+IL
+IN
+IA
+KS
+KY
+LA
+ME
+MD
+MA
+MI
+MN
+MS
+MO
+MT
+NE
+NV
+NH
+NJ
+NM
+NY
+NC
+ND
+OH
+OK
+OR
+PA
+RI
+SC
+SD
+TN
+TX
+UT
+VT
+VA
+WA
+WV
+WI
+WY
+DC
+PR
+VI
+AS
+GU
+MP
+AA
+AE
+AP
+]"
 
 end

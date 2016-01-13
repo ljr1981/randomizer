@@ -186,9 +186,24 @@ feature -- Test routines
 			testing:
 				"covers/{RANDOMIZER}.random_address"
 		do
---			print (Randomizer.random_address)
---			assert ("False", False)
 			Randomizer.random_address.do_nothing
+		end
+
+	random_boolean_test
+		note
+			testing:
+				"covers/{RANDOMIZER}.random_boolean"
+		local
+			l_count: INTEGER
+		do
+			across 1 |..| 100 as ic loop
+				if Randomizer.random_boolean then
+					l_count := l_count + 1
+				end
+			end
+			print (l_count.out + "%N")
+			assert ("half", l_count > 25)
+			assert ("not_all", l_count < 75)
 		end
 
 feature {NONE} -- Implementation
