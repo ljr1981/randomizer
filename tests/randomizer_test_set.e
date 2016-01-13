@@ -157,6 +157,40 @@ feature -- Test routines
 			randomizer.random_with_exceptions ("345", "0123456789").do_nothing
 		end
 
+	random_sentence_test
+		note
+			testing:
+				"covers/{RANDOMIZER}.random_sentence"
+		do
+			Randomizer.random_sentence.do_nothing
+		end
+
+	random_paragraph_test
+		note
+			testing:
+				"covers/{RANDOMIZER}.random_paragraph"
+		do
+			Randomizer.random_paragraph.do_nothing
+		end
+
+	random_city_name_test
+		note
+			testing:
+				"covers/{RANDOMIZER}.random_city_name"
+		do
+			Randomizer.random_city_name.do_nothing
+		end
+
+	random_address_test
+		note
+			testing:
+				"covers/{RANDOMIZER}.random_address"
+		do
+--			print (Randomizer.random_address)
+--			assert ("False", False)
+			Randomizer.random_address.do_nothing
+		end
+
 feature {NONE} -- Implementation
 
 	five_numbers: INTEGER = 3
