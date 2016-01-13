@@ -24,10 +24,10 @@ inherit
 
 feature -- Test routines
 
-	number_test
+	integer_test
 		note
 			testing:
-				"covers/{RANDOMIZER}.random_number"
+				"covers/{RANDOMIZER}.random_integer"
 		local
 			one, two: INTEGER
 		do
@@ -36,19 +36,52 @@ feature -- Test routines
 			from
 				one := 0
 			loop
-				two := Randomizer.random_number
+				two := Randomizer.random_integer
 				assert_integers_not_equal ("one_not_two", one, two)
 				one := two
 			end
 		end
 
-	range_test
+	real_test
 		note
 			testing:
-				"covers/{RANDOMIZER}.random_in_range"
+				"covers/{RANDOMIZER}.random_real"
+		local
+			one, two: REAL_64
+		do
+			across
+				1 |..| 1_000 as ic
+			from
+				one := 0.00
+			loop
+				two := Randomizer.random_real
+				assert_not_equal ("one_not_two", one, two)
+				one := two
+			end
+		end
+
+	integer_range_test
+		note
+			testing:
+				"covers/{RANDOMIZER}.random_integer_in_range"
+		do
+			across 1 |..| 1_000 as ic loop
+				assert ("1_000_integers_in_range", (50 |..| 100).has (randomizer.random_integer_in_range (50 |..| 100)))
+			end
+		end
+
+	real_range_test
+		note
+			testing:
+				"covers/{RANDOMIZER}.random_real_in_range"
+		local
+			l_number: REAL_64
 		do
 			across 1 |..| 100_000 as ic loop
-				assert ("100_000_in_range", (50 |..| 100).has (randomizer.random_in_range (50 |..| 100)))
+				randomizer.random_real_in_range (50 |..| 100).do_nothing
+			end
+			across 1 |..| 100 as ic loop
+				randomizer.random_real_in_range (0 |..| 1).do_nothing
 			end
 		end
 
