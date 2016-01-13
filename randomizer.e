@@ -79,6 +79,39 @@ feature -- Random Boolean
 			end
 		end
 
+feature -- Random Date
+
+	random_date_last_30_days: DATE
+			-- A `random_date_last_30_days'.
+		do
+			Result := random_date_in_range (1 |..| 30)
+		end
+
+	random_date_last_60_days: DATE
+			-- A `random_date_last_60_days'.
+		do
+			Result := random_date_in_range (1 |..| 60)
+		end
+
+	random_date_last_90_days: DATE
+			-- A `random_date_last_90_days'.
+		do
+			Result := random_date_in_range (1 |..| 90)
+		end
+
+	random_date_90_to_120_days: DATE
+			-- A `random_date_90_to_120_days'.
+		do
+			Result := random_date_in_range (90 |..| 120)
+		end
+
+	random_date_in_range (a_range: INTEGER_INTERVAL): DATE
+			-- A `random_date_in_range' in `a_range' of number of days ago.
+		do
+			create Result.make_now
+			Result.day_add (random_integer_in_range (a_range) * -1)
+		end
+
 feature -- Random Characters
 
 	random_digit: CHARACTER
