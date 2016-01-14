@@ -7,6 +7,12 @@
 		of having access to a `random_integer' and `random_integer_in_range'.
 		From these two features, we can ask for random characters
 		from various sets of characters (like A-Z, a-z, and 0-9).
+		
+		Once a stable random number can be generated on-demand, any
+		number of applications can be built (e.g. `random_date_last_90_days').
+		These variously applied-random features allow us to construct
+		any number of randomized test data, which can be used for
+		testing in other venues and use cases.
 		]"
 
 class
@@ -456,6 +462,88 @@ feature -- Randome Strings
 			end
 		end
 
+feature -- Random PID
+
+	random_first_last_name: STRING
+			-- A `random_first_last_name' from `First_names' and `Last_names'.
+		note
+			dependency: "[
+				This feature has a data source file dependecy that must be met!
+				]"
+		do
+			Result := random_first_name
+			Result.append_character (' ')
+			Result.append_string (random_last_name)
+		end
+
+	random_last_first_name: STRING
+			-- A `random_last_first_name' from `Last_names' and `First_names'.
+		note
+			dependency: "[
+				This feature has a data source file dependecy that must be met!
+				]"
+		do
+			Result := random_last_name
+			Result.append_character (',')
+			Result.append_character (' ')
+			Result.append_string (random_first_name)
+		end
+
+	random_first_name: STRING
+			-- A `random_first_name' from a `First_names' list.
+		note
+			dependency: "[
+				This feature has a data source file dependecy that must be met!
+				]"
+		do
+			Result := First_names [random_integer_in_range (1 |..| First_names.count)]
+		end
+
+	random_last_name: STRING
+			-- A `random_last_name' from a `Last_names' list.
+		note
+			dependency: "[
+				This feature has a data source file dependecy that must be met!
+				]"
+		do
+			Result := Last_names [random_integer_in_range (1 |..| Last_names.count)]
+		end
+
+	random_social_security_number: STRING
+			-- A `random_social_security_number'.
+		do
+			Result := random_integer_in_range (111 |..| 999).out
+			Result.append_character ('-')
+			Result := random_integer_in_range (11 |..| 99).out
+			Result.append_character ('-')
+			Result := random_integer_in_range (1111 |..| 9999).out
+		end
+
+	random_formatted_phone_number: STRING
+			-- A `random_phone_number' as "(999) 999-9999".
+		do
+			Result := random_integer_in_range (111 |..| 999).out
+			Result.prepend_character ('(')
+			Result.append_character (')')
+			Result.append_character (' ')
+			Result := random_integer_in_range (111 |..| 999).out
+			Result.append_character ('-')
+			Result := random_integer_in_range (1111 |..| 9999).out
+		end
+
+	random_pan: STRING
+			-- A `random_pan', where PAN is Primary Account Number.
+		do
+			Result := random_integer_in_range (1_111_111 |..| 9_999_999).out
+		end
+
+	random_coded_pan: STRING
+			-- A `random_coded_pan'.
+		do
+			Result := random_word
+			Result.append_string (random_pan)
+		end
+
 feature -- Random Addresses
 
 	random_address: STRING
@@ -856,5 +944,35 @@ AA
 AE
 AP
 ]"
+
+	first_names: ARRAYED_LIST [STRING]
+		local
+			l_file: RAW_FILE
+			l_content: STRING
+			l_list: LIST [STRING]
+		once
+			create l_file.make_open_read ("./data/CSV_Database_of_First_Names.csv")
+			l_file.read_stream (l_file.count)
+			l_content := l_file.last_string
+			l_file.close
+			l_list := l_content.split ('%R')
+			create Result.make (l_list.count)
+			across l_list as ic_list loop Result.force (ic_list.item) end
+		end
+
+	last_names: ARRAYED_LIST [STRING]
+		local
+			l_file: RAW_FILE
+			l_content: STRING
+			l_list: LIST [STRING]
+		once
+			create l_file.make_open_read ("./data/CSV_Database_of_Last_Names.csv")
+			l_file.read_stream (l_file.count)
+			l_content := l_file.last_string
+			l_file.close
+			l_list := l_content.split ('%R')
+			create Result.make (l_list.count)
+			across l_list as ic_list loop Result.force (ic_list.item) end
+		end
 
 end

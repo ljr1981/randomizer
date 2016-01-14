@@ -206,6 +206,42 @@ feature -- Test routines
 			assert ("not_all", l_count < 75)
 		end
 
+	random_first_name_test
+		note
+			testing:
+				"covers/{RANDOMIZER}.random_first_name"
+		local
+			one, two: STRING
+		do
+			across
+				1 |..| 1000 as ic
+			from
+				one := Randomizer.random_first_name
+			loop
+				two := Randomizer.random_first_name
+				assert ("not_same", not two.same_string (one))
+				two := one
+			end
+		end
+
+	random_last_name_test
+		note
+			testing:
+				"covers/{RANDOMIZER}.random_last_name"
+		local
+			one, two: STRING
+		do
+			across
+				1 |..| 1000 as ic
+			from
+				one := Randomizer.random_last_name
+			loop
+				two := Randomizer.random_last_name
+				assert ("not_same", not two.same_string (one))
+				two := one
+			end
+		end
+
 feature {NONE} -- Implementation
 
 	five_numbers: INTEGER = 3
@@ -220,6 +256,7 @@ feature {NONE} -- Implementation
 		once
 			create Result
 		end
+		
 end
 
 
