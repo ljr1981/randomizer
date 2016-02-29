@@ -18,6 +18,14 @@
 class
 	RANDOMIZER
 
+feature -- Identifiers
+
+	uuid: UUID
+			-- `uuid' of Current (like an ISBN, but stronger).
+		once ("OBJECT")
+			create Result.make (random_integer.to_natural_32, random_integer.to_natural_16, random_integer.to_natural_16, random_integer.to_natural_16, random_integer.to_natural_64)
+		end
+
 feature -- Random Numbers
 
 	random_real: REAL_64
