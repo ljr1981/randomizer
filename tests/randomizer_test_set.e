@@ -29,8 +29,31 @@ feature -- Tests: UUID
 		note
 			define: "implies", "[
 						The implies of logic does not connote causality, it simply states that 
-						whenever a certain property is true another one must be too.
+						whenever a certain property is true another one must be also.
 						]"
+			define: "causality", "[
+						1. The relationship between cause and effect."
+						]"
+			implies_truth_table: "[
+			
+					(i /= j)		(uuid /= uuid)
+				      a					   b			a implies b
+				--------------			--------		-----------
+					True				  True				True		i /= j	u /= u	-> OK
+					True				  False				False		i /= j	u = u	-> NOT OK!
+					False				  True				True		i = j	u /= u	-> NOT OK! (not possible so OK)
+					False				  False				True		i = j	u = u	-> OK!
+
+
+					(uuid /= uuid)		(i /= j)
+				      a					   b			a implies b
+				--------------			--------		-----------
+					True				  True				True		u /= u	i /= j	-> OK
+					True				  False				False		u /= u	i = j	-> NOT OK!
+					False				  True				True		u = u	i /= j	-> NOT OK!
+					False				  False				True		u = u	i = j	-> OK
+
+				]"
 		local
 			l_uuids: ARRAYED_LIST [UUID]
 			l_is_unique: BOOLEAN
@@ -47,7 +70,7 @@ feature -- Tests: UUID
 								across
 									1 |..| uuid_test_count as j
 								all
-									l_uuids [i.item] /= l_uuids [j.item] implies i.item /= j.item
+									i.item /= j.item implies l_uuids [i.item] /= l_uuids [j.item]
 								end
 							end
 			assert ("is_unique", l_is_unique)
