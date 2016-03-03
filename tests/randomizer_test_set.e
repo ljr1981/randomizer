@@ -143,7 +143,7 @@ feature -- Tests: Other
 			end
 		end
 
-	unique_test
+	unique_array_test
 		note
 			testing:
 				"covers/{RANDOMIZER}.unique_array"
