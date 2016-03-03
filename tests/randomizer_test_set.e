@@ -22,7 +22,42 @@ inherit
 			default_create as unused_default_create
 		end
 
-feature -- Test routines
+feature -- Tests: UUID
+
+	uuid_uniqueness_test
+			-- Test of UUID Uniqueness
+		note
+			define: "implies", "[
+						The implies of logic does not connote causality, it simply states that 
+						whenever a certain property is true another one must be too.
+						]"
+		local
+			l_uuids: ARRAYED_LIST [UUID]
+			l_is_unique: BOOLEAN
+		do
+			create l_uuids.make (uuid_test_count)
+			across
+				1 |..| uuid_test_count as ic
+			loop
+				l_uuids.force (randomizer.uuid)
+			end
+			l_is_unique := across
+								1 |..| uuid_test_count as i
+							all
+								across
+									1 |..| uuid_test_count as j
+								all
+									l_uuids [i.item] /= l_uuids [j.item] implies i.item /= j.item
+								end
+							end
+			assert ("is_unique", l_is_unique)
+		end
+
+feature {NONE} -- Implementation: Test Support
+
+	uuid_test_count: INTEGER = 1_000
+
+feature -- Tests: Other
 
 	integer_test
 		note
@@ -256,7 +291,7 @@ feature {NONE} -- Implementation
 		once
 			create Result
 		end
-		
+
 end
 
 
