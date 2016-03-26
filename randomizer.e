@@ -160,7 +160,7 @@ feature -- Random Characters
 			in_string: a_string.has (Result)
 		end
 
-feature -- Randome Strings
+feature -- Random Strings
 
 	random_paragraph: STRING
 			-- A `random_paragraph' made up of `random_sentence' items.
@@ -188,6 +188,13 @@ feature -- Randome Strings
 			Result.remove_tail (1)
 			Result.append_character ('.')
 			Result := Result [1].as_upper.out + Result.substring (2, Result.count)
+		end
+
+	random_identifier: STRING
+		do
+			Result := random_word
+			Result.replace_substring_all (" ", "_")
+			Result.append_string (random_integer.out)
 		end
 
 	random_word: STRING
