@@ -247,6 +247,14 @@ feature -- Tests: Other
 			Randomizer.random_address.do_nothing
 		end
 
+	random_address_tuple_test
+		note
+			testing:
+				"covers/{RANDOMIZER}.random_address_tuple"
+		do
+			Randomizer.random_address_tuple.do_nothing
+		end
+
 	random_boolean_test
 		note
 			testing:

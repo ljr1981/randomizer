@@ -578,6 +578,31 @@ feature -- Random Addresses
 			Result.append_string (random_integer_in_range (11111 |..| 99999).out)	-- ZIP Code
 		end
 
+	random_address_tuple: TUPLE [street, name, suffix, city, state, zip: STRING]
+		do
+			Result := [
+						random_integer_in_range (1000 |..| 9999).out,
+						random_word.as_upper,
+						random_street_suffix.as_upper,
+						random_city_name.as_upper,
+						random_state_code,
+						random_integer_in_range (11111 |..| 99999).out
+						]
+		end
+
+	random_address_hash: HASH_TABLE [like random_address_tuple, UUID]
+		local
+			l_capacity: INTEGER
+		do
+			l_capacity := random_integer_in_range (1_000 |..| 2_000)
+			create Result.make (l_capacity)
+			across
+				(1 |..| l_capacity) as ic
+			loop
+				Result.force (random_address_tuple, uuid)
+			end
+		end
+
 	random_state_code: STRING
 		local
 			l_list: LIST [STRING]
