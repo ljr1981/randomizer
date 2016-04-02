@@ -603,6 +603,21 @@ feature -- Random Addresses
 			end
 		end
 
+	random_addresses_as_array (a_range: INTEGER_INTERVAL): ARRAY [like random_address_tuple]
+		local
+			l_capacity: INTEGER
+			l_array: ARRAYED_LIST [like random_address_tuple]
+		do
+			l_capacity := random_integer_in_range (a_range)
+			create l_array.make (l_capacity)
+			across
+				(1 |..| l_capacity) as ic
+			loop
+				l_array.force (random_address_tuple)
+			end
+			Result := l_array.to_array
+		end
+
 	random_state_code: STRING
 		local
 			l_list: LIST [STRING]
