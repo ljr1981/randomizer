@@ -9,7 +9,7 @@
 		from various sets of characters (like A-Z, a-z, and 0-9).
 		
 		Once a stable random number can be generated on-demand, any
-		number of applications can be built (e.g. `random_date_last_90_days').
+		number of applications can be built (e.g. `random_date_past_90_days').
 		These variously applied-random features allow us to construct
 		any number of randomized test data, which can be used for
 		testing in other venues and use cases.
@@ -26,7 +26,23 @@ feature -- Identifiers
 			create Result.make (random_integer.to_natural_32, random_integer.to_natural_16, random_integer.to_natural_16, random_integer.to_natural_16, random_integer.to_natural_64)
 		end
 
+	uuid_hyphenless_string: STRING
+		do
+			Result := uuid.out
+			Result.replace_substring_all ("-", "")
+		end
+
 feature -- Random Numbers
+
+	random_range: INTEGER_INTERVAL
+		do
+			Result := (1 |..| random_number)
+		end
+
+	from_1_to (a_number: INTEGER): INTEGER_INTERVAL
+		do
+			Result := (1 |..| a_number)
+		end
 
 	random_real: REAL_64
 			-- A new `random_real' based on `random_sequence'.
@@ -35,7 +51,8 @@ feature -- Random Numbers
 			Result := Random_sequence.double_item
 		end
 
-	random_integer: INTEGER
+	random_integer,
+	random_number: INTEGER
 			-- A new `random_integer' based on `random_sequence'.
 		do
 			random_sequence.forth
@@ -56,6 +73,29 @@ feature -- Random Numbers
 			Result := random_real * (a_range.upper.to_double - a_range.lower.to_double) + a_range.lower.to_double
 		ensure
 			ranged: (Result >= a_range.lower.to_double) and (Result <= a_range.upper.to_double)
+		end
+
+	random_dollars_in_range (a_range: INTEGER_INTERVAL): DECIMAL
+		do
+			Result := random_decimal_in_range (a_range, 2)
+		end
+
+	random_dollars_in_range_3 (a_range: INTEGER_INTERVAL): DECIMAL
+		do
+			Result := random_decimal_in_range (a_range, 3)
+		end
+
+	random_dollars_in_range_4 (a_range: INTEGER_INTERVAL): DECIMAL
+		do
+			Result := random_decimal_in_range (a_range, 4)
+		end
+
+	random_decimal_in_range (a_range: INTEGER_INTERVAL; a_places: INTEGER): DECIMAL
+		local
+			l_list: LIST [STRING]
+		do
+			l_list := random_real_in_range (a_range).out.split ('.')
+			create Result.make_from_string (l_list [1] + "." + l_list [2].substring (1, a_places))
 		end
 
 	unique_array (a_capacity: INTEGER; a_range: INTEGER_INTERVAL): ARRAYED_LIST [INTEGER]
@@ -95,35 +135,73 @@ feature -- Random Boolean
 
 feature -- Random Date
 
-	random_date_last_30_days: DATE
-			-- A `random_date_last_30_days'.
+	random_date_past_30_days: DATE
+			-- A `random_date_past_30_days'.
 		do
-			Result := random_date_in_range (1 |..| 30)
+			Result := random_date_in_range (1 |..| 30, True)
 		end
 
-	random_date_last_60_days: DATE
-			-- A `random_date_last_60_days'.
+	random_date_past_60_days: DATE
+			-- A `random_date_past_60_days'.
 		do
-			Result := random_date_in_range (1 |..| 60)
+			Result := random_date_in_range (1 |..| 60, True)
 		end
 
-	random_date_last_90_days: DATE
-			-- A `random_date_last_90_days'.
+	random_date_past_90_days: DATE
+			-- A `random_date_past_90_days'.
 		do
-			Result := random_date_in_range (1 |..| 90)
+			Result := random_date_in_range (1 |..| 90, True)
 		end
 
-	random_date_90_to_120_days: DATE
-			-- A `random_date_90_to_120_days'.
+	random_date_past_90_to_120_days: DATE
+			-- A `random_date_past_90_to_120_days'.
 		do
-			Result := random_date_in_range (90 |..| 120)
+			Result := random_date_in_range (90 |..| 120, True)
 		end
 
-	random_date_in_range (a_range: INTEGER_INTERVAL): DATE
+	in_past: BOOLEAN = True
+	in_future: BOOLEAN = False
+
+	random_date_around_now (a_days: INTEGER): DATE
+			-- {DATE} from "now" +/- `a_days'.
+		do
+			Result := random_date_in_future_days (a_days)
+			Result.day_add ( (a_days / 2).truncated_to_integer * -1 )
+		end
+
+	random_date_in_future_days (a_days: INTEGER): DATE
+			-- {DATE} a random `a_days' after "now".
+		do
+			Result := random_date_in_range (1 |..| a_days, in_future)
+		end
+
+	random_date_in_future_range (a_range: INTEGER_INTERVAL): DATE
+			-- {DATE} in `a_range' after "now".
+		do
+			Result := random_date_in_range (a_range, in_future)
+		end
+
+	random_date_in_past_days (a_days: INTEGER): DATE
+			-- {DATE} a random `a_days' before "now".
+		do
+			Result := random_date_in_range (1 |..| a_days, in_past)
+		end
+
+	random_date_in_past_range (a_range: INTEGER_INTERVAL): DATE
+			-- {DATE} in `a_range' before "now".
+		do
+			Result := random_date_in_range (a_range, in_past)
+		end
+
+	random_date_in_range (a_range: INTEGER_INTERVAL; a_in_past: BOOLEAN): DATE
 			-- A `random_date_in_range' in `a_range' of number of days ago.
 		do
 			create Result.make_now
-			Result.day_add (random_integer_in_range (a_range) * -1)
+			if a_in_past then
+				Result.day_add (random_integer_in_range (a_range) * -1)
+			else
+				Result.day_add (random_integer_in_range (a_range))
+			end
 		end
 
 feature -- Random Characters
@@ -161,6 +239,80 @@ feature -- Random Characters
 		end
 
 feature -- Random Strings
+
+	random_schedule_spec_unbounded: STRING
+			-- Example: "<><JAN-DEC><MON-FRI><0800-1700><>"
+			-- Unbounded having no start or end date boundaries
+		do
+			create Result.make_empty
+			Result := "<>" + "<" + random_month_name_range + "><" + random_day_name_range + "><" + random_hours_range + "><>"
+		end
+
+	hours_list: ARRAY [STRING]
+		once
+			Result := <<"0000","0100","0200","0300","0400","0500","0600","0700","0800","0900","1000","1100","1200","1300","1400","1500","1600","1700","1800","1900","2000","2100","2200","2300">>
+		end
+
+	random_hour: STRING
+		do
+			Result := random_string_from_list (1, 24, hours_list)
+		end
+
+	random_hours_range: STRING
+		do
+			Result := random_string_from_list (1, 12, hours_list) + "-" + random_string_from_list (13, 24, hours_list)
+		end
+
+	random_day_name: STRING
+		do
+			Result := random_string_from_list (1, 7, day_names)
+		end
+
+	random_day_name_range: STRING
+		do
+			Result := random_string_from_list (1, 4, day_names) + "-" + random_string_from_list (5, 6, day_names)
+		end
+
+	day_names: ARRAY [STRING]
+		once
+			Result := <<"SUN","MON","TUE","WED","THU","FRI","SAT">>
+		ensure
+			Result.count = 7
+		end
+
+	random_month_name: STRING
+		do
+			Result := random_string_from_list (1, 12, month_names)
+		end
+
+	random_month_name_range: STRING
+		do
+			Result := random_string_from_list (1, 6, month_names) + "-" + random_string_from_list (7, 12, month_names)
+		end
+
+	month_names: ARRAY [STRING]
+		once
+			Result := <<"JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC">>
+		ensure
+			Result.count = 12
+		end
+
+	random_string_from_list (a_start, a_end: INTEGER; a_list: ARRAY [STRING]): STRING
+		require
+			positive: a_start > 0 and a_end > 0
+			in_range: a_start <= a_list.count and a_end <= a_list.count
+			left_to_right: a_start < a_end
+		local
+			l_rnd: INTEGER
+		do
+			l_rnd := random_integer_in_range (a_start |..| a_end)
+			Result := a_list [l_rnd]
+		end
+
+	random_uom: STRING
+		do
+			Result := uoms [random_integer_in_range (from_1_to (uoms.count))]
+		end
 
 	random_paragraph: STRING
 			-- A `random_paragraph' made up of `random_sentence' items.
@@ -1029,5 +1181,154 @@ AP
 			create Result.make (l_list.count)
 			across l_list as ic_list loop Result.force (ic_list.item) end
 		end
+
+	uoms: ARRAYED_LIST [STRING]
+		local
+			l_list: LIST [STRING]
+		once
+			l_list := uom_data.split ('%N')
+			create Result.make (l_list.count)
+			across
+				l_list as ic
+			loop
+				Result.force (ic.item)
+			end
+		end
+
+	uom_data: STRING = "[
+ANGSTROM
+ATTOMETER
+BIT
+BRONTOBYTE
+BYTE
+CARAT
+CENTIMETER
+CHAIN
+CORUSCANT STANDARD CARAT
+CUBIC CENTIMETER
+CUBIC KILOMETER
+CUBIC KILOMETER
+CUBIC METER
+CUBIC METER
+CUBIT
+DAY 
+DECADE
+DECAMETER 
+DECIMETER
+DEGREE 
+DEGREE STANDARD
+EACH
+ENERGY UNIT
+EXABYTE
+EXAMETER
+EXAPARSEC
+FATHOM
+FEMTOMETER
+FOOT 
+FURLONG
+GALLON
+GEOPBYTE
+G-FORCE 
+G-FORCE
+GIGABYTE
+GIGAMETER
+GIGAPARSEC
+GIGATON 
+GIGAWATT
+GLEKK
+GRAM
+GRIMNAL
+HECTARE
+HECTOMETER
+HOUR
+IMPERIAL MINUTE
+INCH
+JOTABYTE
+JOULE
+KET
+KILOBYTE
+KILOGRAM
+KILOMETER 
+KILOMETER PER HOUR 
+KILOPARSEC
+KLEKKET 
+KTU
+KUBA 
+LIGHT YEAR
+LINE
+LINEAR FOOT
+LINEAR YARD
+LITRE
+MEGABYTE
+MEGAJOULE 
+MEGALIGHT
+MEGAMETER
+MEGAPARSEC
+MEGATOME
+METER 
+METRIC TON 
+MICROGRAM
+MICROHERTZ
+MICROMETER
+MICROSECOND
+MILE
+MILE PER HOUR 
+MILLENNIUM
+MILLIBAR
+MILLIGRAM
+MILLIMETER 
+MINUTE 
+MYRIAMETER 
+MYRIOMETER
+NANOMETER
+NANOSECOND
+NIBBLE
+PARSEC 
+PETABYTE
+PETAMETER
+PETAPARSEC
+PHONOKA
+PICOMETER
+PINT
+PLANCK LENGTH 
+PLANCKTIME 
+POINT
+POUND
+POWER UNIT
+PROGRESSION
+ROD
+RU
+SAGABYTE
+SALT PAN 
+SANGEN
+SBD
+SECOND
+SIRIOMETER
+SQUARE FOOT
+SQUARE YARD
+STANDARD CENTURY
+STANDARD MONTH 
+STANDARD WEEK
+STANDARD YEAR
+STRONG-STROKE
+SUBLIGHT UNIT 
+TERABYTE
+TERAHERTZ
+TERAMETER
+TERAPARSEC
+TROGAN METER 
+VISVIA 
+WATT 
+WATT
+YARD
+YOCTOMETER
+YOTTABYTE
+YOTTAMETER
+YOTTAPARSEC
+ZEPTOMETER
+ZETAPARSEC
+ZETTABYTE
+ZETTAMETER
+]"
 
 end

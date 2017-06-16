@@ -22,6 +22,11 @@ inherit
 			default_create as unused_default_create
 		end
 
+	RANDOMIZER
+		rename
+			default_create as randomizer_default_create
+		end
+
 feature -- Tests: UUID
 
 	uuid_uniqueness_test
@@ -81,6 +86,20 @@ feature {NONE} -- Implementation: Test Support
 	uuid_test_count: INTEGER = 1_000
 
 feature -- Tests: Other
+
+	date_range_tests
+		local
+			l_tomorrow,
+			l_day_after: DATE
+		do
+			if attached {DATE} random_date_in_future_range (1 |..| 2) as al_date then
+				create l_tomorrow.make_now
+				l_tomorrow.day_add (1)
+				create l_day_after.make_now
+				l_day_after.day_add (2)
+				assert_32 ("either_tomorrow_or_day_after", al_date ~ l_tomorrow xor al_date ~ l_day_after)
+			end
+		end
 
 	integer_test
 		note
