@@ -787,6 +787,16 @@ feature -- Random Addresses
 			Result.append_string (l_list [random_integer_in_range (1 |..| l_list.count)])
 		end
 
+	random_world_city: TUPLE [country, city, accentcity, region, population, latitude, longitude: STRING]
+		do
+			Result := World_cities [random_integer_in_range (from_1_to (World_cities.count))]
+		end
+
+	random_occupation: STRING
+		do
+			Result := Occupations [random_integer_in_range (from_1_to (Occupations.count))]
+		end
+
 	random_street_suffix: STRING
 		local
 			l_list: LIST [STRING]
@@ -1180,6 +1190,54 @@ AP
 			l_list := l_content.split ('%R')
 			create Result.make (l_list.count)
 			across l_list as ic_list loop Result.force (ic_list.item) end
+		end
+
+	World_cities: ARRAYED_LIST [TUPLE [country, city, accentcity, region, population, latitude, longitude: STRING]]
+			--Country,City,AccentCity,Region,Population,Latitude,Longitude
+			--ad,aixas,Aixàs,06,,42.4833333,1.4666667
+			--ad,aixirivali,Aixirivali,06,,42.4666667,1.5
+			--ad,aixirivall,Aixirivall,06,,42.4666667,1.5		
+		local
+			l_file: RAW_FILE
+			l_content: STRING
+			l_list,
+			l_line: LIST [STRING]
+		once
+			create Result.make (100_000)
+			create l_file.make_open_read ("./data/worldcitiespop.txt")
+			l_file.read_stream (l_file.count)
+			l_content := l_file.last_string
+			l_file.close
+			l_content.replace_substring_all ("%R", "")
+			l_list := l_content.split ('%N')
+			across
+				l_list as ic_list
+			loop
+				l_line := ic_list.item.split (',')
+				if ic_list.cursor_index > 1 then
+					Result.force ([ l_line [1], l_line [2], l_line [3], l_line [4], l_line [5], l_line [6], l_line [7] ])
+				end
+			end
+		end
+
+	Occupations: ARRAYED_LIST [STRING]
+		local
+			l_file: RAW_FILE
+			l_content: STRING
+			l_list: LIST [STRING]
+		once
+			create Result.make (2_000)
+			create l_file.make_open_read ("./data/occupations.txt")
+			l_file.read_stream (l_file.count)
+			l_content := l_file.last_string
+			l_file.close
+			l_content.replace_substring_all ("%R", "")
+			l_list := l_content.split ('%N')
+			across
+				l_list as ic_list
+			loop
+				Result.force (ic_list.item)
+			end
 		end
 
 	uoms: ARRAYED_LIST [STRING]
