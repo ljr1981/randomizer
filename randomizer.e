@@ -314,6 +314,146 @@ feature -- Random Strings
 			Result := uoms [random_integer_in_range (from_1_to (uoms.count))]
 		end
 
+	random_material_type_subtype: STRING
+		do
+			Result := material_type_subtypes [random_integer_in_range (from_1_to (material_type_subtypes.count))]
+		end
+
+	material_type_subtypes: ARRAYED_LIST [STRING]
+		do
+			create Result.make (1_000)
+			Result.force("Wood")
+			Result.force("Wood:Rough Carpentry")
+			Result.force("Wood:Rough Carpentry:Heavy Timbers")
+			Result.force("Wood:Rough Carpentry:Log Home")
+			Result.force("Wood:Rough Carpentry:Timber Framing")
+			Result.force("Wood:Rough Carpentry:Post and Beam")
+			Result.force("Wood:Rough Carpentry:Bamboo")
+			Result.force("Wood:Rough Carpentry:Engineered Wood")
+			Result.force("Wood:Rough Carpentry:Dimensional Lumber")
+			Result.force("Wood:Rough Carpentry:Dimensional Lumber:Stud")
+			Result.force("Wood:Rough Carpentry:Dimensional Lumber:Joist")
+			Result.force("Wood:Rough Carpentry:Dimensional Lumber:Rafter")
+			Result.force("Wood:Rough Carpentry:Dimensional Lumber:Treated")
+			Result.force("Wood:Rough Carpentry:Dimensional Lumber:Decking")
+			Result.force("Wood:Rough Carpentry:Sheathing")
+			Result.force("Wood:Rough Carpentry:Sheathing:Plywood")
+			Result.force("Wood:Rough Carpentry:Sheathing:Shiplap")
+			Result.force("Wood:Rough Carpentry:Sheathing:Tongue and Groove")
+			Result.force("Wood:Rough Carpentry:Sheathing:Oriented Strand Board")
+			Result.force("Wood:Rough Carpentry:Subflooring")
+			Result.force("Wood:Rough Carpentry:Paneling")
+			Result.force("Wood:Rough Carpentry:Parallel Strand Lumber")
+			Result.force("Wood:Rough Carpentry:Glue-laminate")
+			Result.force("Wood:Finish Carpentry")
+			Result.force("Wood:Finish Carpentry:Veneer")
+			Result.force("Wood:Finish Carpentry:Plastic Laminate")
+			Result.force("Wood:Finish Carpentry:Wood Panel")
+			Result.force("Wood:Finish Carpentry:Case-building Products")
+			Result.force("Wood:Finish Carpentry:Case-building Products:Millwork")
+			Result.force("Wood:Finish Carpentry:Case-building Products:Bookcase")
+			Result.force("Wood:Finish Carpentry:Case-building Products:Cabinets")
+			Result.force("Wood:Finish Carpentry:Ornamental Woodwork")
+			Result.force("Wood:Finish Carpentry:Trim")
+			Result.force("Wood:Finish Carpentry:Moulding")
+			Result.force("Wood:Finish Carpentry:Moulding:Chair Rail")
+			Result.force("Wood:Finish Carpentry:Moulding: Baseboard")
+			Result.force("Wood:Finish Carpentry:Moulding: Casing")
+			Result.force("Wood:Finish Carpentry:Moulding: Sill")
+			Result.force("Windows")
+			Result.force("Windows:Casement")
+			Result.force("Windows:Double-hung")
+			Result.force("Windows:Bay")
+			Result.force("Windows:Curtainwall")
+			Result.force("Windows:Skylight")
+			Result.force("Windows:Dormer")
+		end
+
+	random_job_type_subtype: STRING
+		do
+			Result := job_type_subtypes [random_integer_in_range (from_1_to (job_type_subtypes.count))]
+		end
+
+	job_type_subtypes: ARRAYED_LIST [STRING]
+		do
+			create Result.make (1_000)
+			Result.force ("Airline")
+			Result.force ("Airline:Aircraft Dispatcher")
+			Result.force ("Airline:Aircraft Mechanic")
+			Result.force ("Airline:Airline Pilot")
+			Result.force ("Airline:Flight Attendant")
+			Result.force ("Arts")
+			Result.force ("Arts:Actor")
+			Result.force ("Arts:Architecture")
+			Result.force ("Arts:Art Appraiser")
+			Result.force ("Arts:Art Auctioneer")
+			Result.force ("Arts:Artist")
+			Result.force ("Arts:Museum Jobs")
+			Result.force ("Arts:Music Conductor")
+			Result.force ("Business")
+			Result.force ("Business:Accountant")
+			Result.force ("Business:Administrative Assistant/Secretary")
+			Result.force ("Business:Advertising")
+			Result.force ("Business:Consultant")
+			Result.force ("Business:Financial Advisor")
+			Result.force ("Business:Fundraiser")
+			Result.force ("Business:Government Jobs")
+			Result.force ("Business:Human Resources")
+			Result.force ("Business:Insurance Agent")
+			Result.force ("Business:Investment Banker")
+			Result.force ("Business:Lawyer")
+			Result.force ("Business:Management")
+			Result.force ("Business:Market Research Analyst")
+			Result.force ("Business:Nonprofit Job")
+			Result.force ("Business:Law Enforcement")
+			Result.force ("Criminal Justice")
+			Result.force ("Criminal Justice:Federal Law Enforcement")
+			Result.force ("Criminal Justice:Police Officer")
+			Result.force ("Criminal Justice:Media")
+			Result.force ("Book Publishing")
+			Result.force ("Book Publishing:Freelance Editor")
+			Result.force ("Book Publishing:Book Publishing:Freelance Writer")
+			Result.force ("Book Publishing:Public Relations")
+			Result.force ("Book Publishing:Web Developer")
+			Result.force ("Book Publishing:Writer/Editor")
+			Result.force ("Medical")
+			Result.force ("Medical:Doctor")
+			Result.force ("Medical:Nurse")
+			Result.force ("Medical:Paramedic")
+			Result.force ("Medical:Psychologist")
+			Result.force ("Medical:Social Worker")
+			Result.force ("Medical:Veterinarian")
+			Result.force ("Service Industry")
+			Result.force ("Service Industry:Bank Teller")
+			Result.force ("Service Industry:Call Center")
+			Result.force ("Service Industry:Funeral Director")
+			Result.force ("Service Industry:Hair Stylist")
+			Result.force ("Service Industry:Personal Fitness Trainer")
+			Result.force ("Service Industry:Retail")
+			Result.force ("Service Industry:Sales")
+			Result.force ("Service Industry:Ski Instructor")
+			Result.force ("Service Industry:Waiter")
+			Result.force ("Service Industry:Wedding Planner")
+			Result.force ("Teaching")
+			Result.force ("Teaching:Career Counselor")
+			Result.force ("Teaching:School Jobs")
+			Result.force ("Teaching:Substitute Teacher")
+			Result.force ("Teaching:Teacher")
+			Result.force ("Teaching:Teaching Abroad")
+			Result.force ("Teaching:Teaching Online")
+			Result.force ("Technology")
+			Result.force ("Technology:App Developer")
+			Result.force ("Technology:Computer Programmer")
+			Result.force ("Technology:Database Administrator")
+			Result.force ("Technology:Programmer")
+			Result.force ("Technology:Software Developer")
+			Result.force ("Technology:Web Developer")
+			Result.force ("Other")
+			Result.force ("Other:Animal Careers")
+			Result.force ("Other:Military Careers")
+			Result.force ("Other:STEM Careers")
+		end
+
 	random_paragraph: STRING
 			-- A `random_paragraph' made up of `random_sentence' items.
 		do
@@ -852,7 +992,7 @@ feature {NONE} -- Implementation
 		local
 			l_time: TIME
 			l_seed: INTEGER
-		once
+		once ("object")
 				-- This computes milliseconds since midnight.
 			create l_time.make_now
 			l_seed := l_time.hour
