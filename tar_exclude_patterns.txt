@@ -1,0 +1,8 @@
+./.git*
+./EIFGENs
+./*.bz2
+./dict
+iron_share_create.bat
+iron_share_update.bat
+tar_exclude_patterns.txt
+worldcitiespop2.txt

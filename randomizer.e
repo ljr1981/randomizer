@@ -32,6 +32,20 @@ feature -- Identifiers
 			Result.replace_substring_all ("-", "")
 		end
 
+feature -- Random Arrays
+
+	random_array_strings (a_count: INTEGER): ARRAY [STRING]
+		local
+
+		do
+			create Result.make_filled ("", 1, a_count)
+			across
+				1 |..| a_count as ic
+			loop
+				Result.put (random_word, ic.item)
+			end
+		end
+
 feature -- Random Numbers
 
 	random_range: INTEGER_INTERVAL

@@ -1,0 +1,15 @@
+package randomizer
+
+project
+	randomizer = "randomizer.ecf"
+
+note
+	title: Randomizer
+	description: "A collection of convenient randomizing routines for creating a variety of random things"
+
+	tags: random,eiffel
+	license: Eiffel Forum License v2 
+	copyright: 2018 Larry Rix
+	link[license]: http://www.eiffel.com/licensing/forum.txt external
+
+end
